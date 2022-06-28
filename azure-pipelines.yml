@@ -16,6 +16,7 @@ variables:
   containerRegistry: 'marcweber.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
   tag: '$(Build.BuildId)'
+  imagename: $(Build.Repository.Name):$(Build.BuildId)
 
 
 
@@ -33,14 +34,14 @@ stages:
       - task: Docker@0
         displayName: 'Build an image'
         inputs:
-          dockerFile: ./Dockerfile
+          dockerFile: $(dockerfilePath)
           azureSubscription: $(dockerRegistryServiceConnection)
           azureContainerRegistry: $(azureContainerRegistry)
-          imageName: 'grandnode2'
+          imageName: $(imagename)
           includeSourceTags: true
           includeLatestTag: true
           context: .
-          additionalImageTags: $(tag)
+          
 
       - task: Docker@0
         displayName: 'Push an image'
@@ -48,3 +49,4 @@ stages:
           azureSubscription: $(dockerRegistryServiceConnection)
           azureContainerRegistry: $(azureContainerRegistry)
           action: 'Push an image'
+          imageName: $(imagename)
