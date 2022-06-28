@@ -11,7 +11,7 @@ env:
   REGISTRY: $"https://${{ secrets.AZ_REGISTER_URL }}/"
   REGISTRY_OWNER: ${{ secrets.AZ_REGISTER_USERNAME }} 
   REGISTRY_NAME: ${{ secrets.AZ_REGISTER_USERNAME }} 
-  IMAGE_NAME: grandnode2
+  IMAGE_NAME: grandnode2:$(date +%s)
 
 jobs:
 
@@ -31,10 +31,10 @@ jobs:
       # Container registry server url
         login-server: ${{ secrets.AZ_REGISTER_URL }} 
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: docker build . --file Dockerfile --tag ${{ env.IMAGE_NAME }}
     - name: Push container to Azure Container Registry
       uses: docker/build-push-action@v2
       with:
         context: .
         push: true
-        tags: ${{ env.REGISTRY_OWNER }}.azurecr.io/${{env.IMAGE_NAME}}:${{ env.RELEASE_VERSION }}
+        tags: ${{ env.REGISTRY_OWNER }}.azurecr.io/${{env.IMAGE_NAME}}
