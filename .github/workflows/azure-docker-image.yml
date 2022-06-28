@@ -1,0 +1,40 @@
+name: Docker Image CI to ACR
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+
+env:
+  REGISTRY: $"https://${{ secrets.AZ_REGISTER_URL }}/"
+  REGISTRY_OWNER: ${{ secrets.AZ_REGISTER_USERNAME }} 
+  REGISTRY_NAME: ${{ secrets.AZ_REGISTER_USERNAME }} 
+  IMAGE_NAME: grandnode2
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Azure Container Registry Login
+      uses: Azure/docker-login@v1
+      with:
+      # Container registry username
+        username: ${{ secrets.AZ_REGISTER_USERNAME }} 
+      # Container registry password
+        password: ${{ secrets.AZ_REGISTER_PASSWORD }} 
+      # Container registry server url
+        login-server: ${{ secrets.AZ_REGISTER_URL }} 
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+    - name: Push container to Azure Container Registry
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: ${{ env.REGISTRY_OWNER }}.azurecr.io/${{env.IMAGE_NAME}}:${{ env.RELEASE_VERSION }}
