@@ -8,7 +8,7 @@ on:
 
 
 env:
-  REGISTRY: $"https://${{ secrets.AZ_REGISTER_URL }}/"
+  REGISTRY: "https://marcweber.azurecr.io"
   REGISTRY_OWNER: ${{ secrets.AZ_REGISTER_USERNAME }} 
   REGISTRY_NAME: ${{ secrets.AZ_REGISTER_USERNAME }} 
   IMAGE_NAME: grandnode2
@@ -39,4 +39,4 @@ jobs:
       with:
           context: .
           push: true
-          tags: ${{ env.REGISTRY_OWNER }}.azurecr.io/${{env.IMAGE_NAME}}:${{ env.RELEASE_VERSION }}
+          tags: ${{ env.REGISTRY }}/${{env.IMAGE_NAME}}:${{ env.RELEASE_VERSION }}
